@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../assets/css/dashboard.css';
 import Window from '../components/window';
 import Application from '../components/application';
+import Timeline from '../components/timeline';
 
 function Dashboard() {
     const [activityData, setActivityData] = useState([]);
@@ -13,19 +14,30 @@ function Dashboard() {
 
     useEffect(() => {
         fetchData();
+        fetchActiveTime();
     }, [date]);
 
     const fetchData = async () => {
+        const formattedDate = date.toISOString().split('T')[0];
         try {
-            const response = await axios.get('http://localhost:8080/v1/report/log');
+            const response = await axios.get(`http://localhost:8080/v1/report/log?date=${formattedDate}`);
             setActivityData(response.data);
 
-            // Dinamik olarak o anki kullanıcıyı alıyoruz.
             if (response.data.length > 0) {
-                setCurrentUser(response.data[0].username); // İlk aktivite kaydından kullanıcıyı alıyoruz.
+                setCurrentUser(response.data[0].username);
             }
         } catch (error) {
             console.error('Error fetching activity data', error);
+        }
+    };
+
+    const fetchActiveTime = async () => {
+        const formattedDate = date.toISOString().split('T')[0];
+        try {
+            const response = await axios.get(`http://localhost:8080/v1/report/active-time/${formattedDate}`);
+            setActiveTime(response.data);  // Backend'den alınan aktiflik süresi
+        } catch (error) {
+            console.error("Error fetching active time", error);
         }
     };
 
@@ -33,7 +45,7 @@ function Dashboard() {
         return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
     };
 
-    const handleDateChange = (direction) => {
+    const handleDateChange = async (direction) => {
         const newDate = new Date(date);
         newDate.setDate(date.getDate() + direction);
         setDate(newDate);
@@ -48,8 +60,8 @@ function Dashboard() {
             </div>
             <div className="header">
                 <h2>Activity for {formatDate(date)}</h2>
-                <p>Host: {host || currentUser}</p> {/* Dinamik olarak kullanıcı ismi */}
-                <p>Time Active: {activeTime}</p>
+                <p>Host: {host || currentUser}</p>
+                <p>Time Active: {activeTime} minutes</p>
             </div>
             <div className="summary">
                 <h3>Top Applications</h3>
@@ -64,7 +76,7 @@ function Dashboard() {
                 ))}
             </div>
             <div className="timeline">
-                {/* Timeline barchart will go here */}
+                <Timeline activities={activityData} activeTime={activeTime} />
             </div>
         </div>
     );
