@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement } from 'chart.js';
-import '../assets/css/timeline.css';
+import '../assets/css/dashboard.css';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement);
 
@@ -11,8 +11,8 @@ function Timeline({ activities, activeTime }) {
         datasets: [
             {
                 label: 'Activity Timeline',
-                data: new Array(19).fill(0),
-                backgroundColor: new Array(19).fill('rgba(169, 169, 169, 0.2)'),
+                data: [], // Start with an empty array
+                backgroundColor: [], // Start with an empty array
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1,
             },
@@ -20,11 +20,11 @@ function Timeline({ activities, activeTime }) {
     });
 
     useEffect(() => {
-        if (activities) {
-            const hours = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
-            let activeTimes = new Array(19).fill(0);
-            let colors = new Array(19).fill('rgba(169, 169, 169, 0.2)');
+        const hours = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
+        let activeTimes = new Array(19).fill(0);
+        let colors = new Array(19).fill('rgba(169, 169, 169, 0.2)');
 
+        if (activities && activities.length > 0) {
             activities.forEach((activity) => {
                 const activityDate = new Date(activity.date);
                 const hour = activityDate.getHours();
@@ -36,31 +36,20 @@ function Timeline({ activities, activeTime }) {
                     }
                 }
             });
-
-            activeTimes = activeTimes.map(time => Math.min(time, 60));
-
-            setChartData((prevState) => ({
-                ...prevState,
-                datasets: [
-                    {
-                        ...prevState.datasets[0],
-                        data: activeTimes,
-                        backgroundColor: colors,
-                    },
-                ],
-            }));
-        } else {
-            setChartData((prevState) => ({
-                ...prevState,
-                datasets: [
-                    {
-                        ...prevState.datasets[0],
-                        data: new Array(19).fill(0),
-                        backgroundColor: new Array(19).fill('rgba(169, 169, 169, 0.2)'),
-                    },
-                ],
-            }));
         }
+
+        activeTimes = activeTimes.map(time => Math.min(time, 60));
+
+        setChartData((prevState) => ({
+            ...prevState,
+            datasets: [
+                {
+                    ...prevState.datasets[0],
+                    data: activeTimes,
+                    backgroundColor: colors,
+                },
+            ],
+        }));
     }, [activities]);
 
     return (
@@ -69,11 +58,17 @@ function Timeline({ activities, activeTime }) {
                 data={chartData}
                 options={{
                     responsive: true,
+                    maintainAspectRatio: false,
                     scales: {
                         x: {
                             title: {
                                 display: true,
                                 text: 'Hours',
+                            },
+                            ticks: {
+                                padding: 5,
+                                offset: true,
+                                labelOffset: 8,
                             },
                         },
                         y: {
@@ -100,5 +95,4 @@ function Timeline({ activities, activeTime }) {
         </div>
     );
 }
-
 export default Timeline;

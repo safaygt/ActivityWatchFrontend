@@ -2,16 +2,15 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
     background-color: #ffffff;
-    min-height: 100%;
-    height: auto;
-    font-family: Arial, sans-serif;
+    min-height: 85vh;
+    width: 85%;
     margin-left: auto;
     margin-right: auto;
-    width: 70%;
+    font-family: Arial, sans-serif;
+
 }
-
-
 
 .date-navigation button:hover {
     background-color: #5a6268;
@@ -39,6 +38,7 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
+    align-items: flex-start;
 }
 
 .summary {
@@ -50,6 +50,8 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    overflow: auto;
+    max-height: none !important;
 }
 
 .summary h3 {
@@ -76,7 +78,6 @@
     border: 1px solid #ced4da;
     border-radius: 0.5rem;
     cursor: pointer;
-    margin-top: 1rem;
     align-self: flex-start;
     margin-left: 0;
     display: flex;
@@ -91,8 +92,8 @@
 }
 
 .show-more svg {
-    width: 1em;
-    height: 1em;
+    width: 1rem;
+    height: 1rem;
     vertical-align: middle;
 }
 
@@ -125,7 +126,6 @@
     width: auto;
 }
 
-
 .application-item p:last-child,
 .window-item p:last-child {
     font-size: 0.9rem;
@@ -137,12 +137,12 @@
 }
 
 .canvas-container {
-    margin-top: 1.5rem;
+    margin-top: 1.25rem;
     width: 100%;
-    max-width: none;
-    height: 15rem;
+    max-width: 50rem;
+    min-height: 100%;
+    height: 25rem;
 }
-
 
 .chartjs-render-monitor {
     display: block;
@@ -161,28 +161,16 @@ canvas {
     padding: 1rem;
 }
 
-
 .date-navigation {
-
     display: flex;
-
-
     align-items: center;
     width: 100%;
-
     justify-content: center;
-
     border-bottom: solid 1px #5a6268;
     padding-bottom: 1rem;
-
-
 }
 
-
-
 .date-navigation button {
-
-
     background-color: #6c757d;
     color: white;
     border: none;
@@ -191,11 +179,7 @@ canvas {
     cursor: pointer;
     border-radius: 0.5rem;
     margin: 0 0.5rem;
-
-
 }
-
-
 
 .date-input {
     padding: 0.5rem;
