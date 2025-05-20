@@ -16,6 +16,19 @@ function Application({ data }) {
         padding: '0.5rem 1rem',
     };
 
+    const formatActiveTime = (minutes) => {
+
+        if (minutes >= 60) {
+            const hours = Math.floor(minutes / 60);
+            const remainingMinutes = minutes % 60;
+            return `${hours}h ${remainingMinutes}m`;
+
+        } else {
+            return `${minutes}m`;
+        }
+
+    };
+
 
 
     const timeStyle = {
@@ -33,7 +46,7 @@ function Application({ data }) {
                 </p>
 
                 <p style={timeStyle}>
-                    {data.activeTime} minutes
+                    {formatActiveTime(data.activeTime)}
                 </p>
             </div>
         </div>

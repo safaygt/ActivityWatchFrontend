@@ -11,8 +11,10 @@ function Dashboard() {
     const [host, setHost] = useState('');
     const [activeTime, setActiveTime] = useState(0);
     const [currentUser, setCurrentUser] = useState('');
-    const [showMoreApps, setShowMoreApps] = useState(false);
-    const [showMoreWindows, setShowMoreWindows] = useState(false);
+    const [showMoreAppsCount, setShowMoreAppsCount] = useState(5);
+    const [showMoreWindowsCount, setShowMoreWindowsCount] = useState(5);
+    const [showLessApps, setShowLessApps] = useState(false);
+    const [showLessWindows, setShowLessWindows] = useState(false);
 
     useEffect(() => {
         fetchData();
@@ -42,6 +44,20 @@ function Dashboard() {
         }
     };
 
+
+    const formatActiveTime = (minutes) => {
+
+        if (minutes >= 60) {
+            const hours = Math.floor(minutes / 60);
+            const remainingMinutes = minutes % 60;
+            return `${hours}h ${remainingMinutes}m`;
+
+        } else {
+            return `${minutes}m`;
+        }
+
+    };
+
     const groupActivities = (activities) => {
         const groupedApplications = {};
         const groupedWindows = {};
@@ -53,6 +69,7 @@ function Dashboard() {
                     }
                     groupedApplications[activity.applicationName] += 1;
                 }
+
                 if (activity.windowTitle) {
                     const cleanedWindowTitle = activity.windowTitle.replace(/^[^a-zA-Z0-9\sĞÜŞİÖÇğüşıöç]*\s*/, '');
                     if (!groupedWindows[cleanedWindowTitle]) {
@@ -62,7 +79,6 @@ function Dashboard() {
                 }
             }
         });
-        // Sort applications and windows by active time (minutes) in descending order
         const sortedApplications = Object.entries(groupedApplications).sort(([, a], [, b]) => b - a);
         const sortedWindows = Object.entries(groupedWindows).sort(([, a], [, b]) => b - a);
         return {
@@ -98,12 +114,32 @@ function Dashboard() {
         setDate(newDate);
     };
 
+    const handleShowMoreApps = () => {
+        setShowMoreAppsCount(prevCount => prevCount + 5);
+        setShowLessApps(true);
+    };
+
+    const handleShowMoreWindows = () => {
+        setShowMoreWindowsCount(prevCount => prevCount + 5);
+        setShowLessWindows(true);
+    };
+
+    const handleShowLessApps = () => {
+        setShowMoreAppsCount(5);
+        setShowLessApps(false);
+    };
+
+    const handleShowLessWindows = () => {
+        setShowMoreWindowsCount(5);
+        setShowLessWindows(false);
+    };
+
     return (
         <div className="dashboard-container">
             <div className="header">
                 <h2>Activity for {formatDateForDisplay(date)}</h2>
                 <p>Host: {host || currentUser}</p>
-                <p>Time Active: {activeTime} minutes</p>
+                <p>{formatActiveTime(activeTime)}</p>
             </div>
             <div className="date-navigation">
                 <button onClick={() => handleDateChange(-1)}><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-left" viewBox="0 0 16 16">
@@ -123,64 +159,50 @@ function Dashboard() {
                 <div className="summary">
                     <h3>Top Applications</h3>
                     {Object.entries(groupedApplications).length > 0 ? (
-                        Object.entries(groupedApplications).slice(0, showMoreApps ? undefined : 5).map(([appName, minutes]) => (
-                            <Application key={appName} data={{ applicationName: appName, activeTime: minutes }} />
-                        ))
+                        Object.entries(groupedApplications)
+                            .slice(0, showMoreAppsCount)
+                            .map(([appName, minutes]) => (
+                                <Application key={appName} data={{ applicationName: appName, activeTime: minutes }} />
+                            ))
                     ) : (
                         <p className="no-data">No Applications</p>
                     )}
-                    {Object.entries(groupedApplications).length > 5 && (
-                        <button className="show-more" onClick={() => setShowMoreApps(!showMoreApps)}>
-                            {showMoreApps ? (
-                                <>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-double-up" viewBox="0 0 16 16">
-                                        <path fillRule="evenodd" d="M1.646 9.646a.5.5 0 0 1 .708 0L8 3.707l5.646 5.647a.5.5 0 0 1 .708-.708l-6-6a.5.5 0 0 1-.708 0l-6 6a.5.5 0 0 1 0 .708z" />
-                                        <path fillRule="evenodd" d="M1.646 13.646a.5.5 0 0 1 .708 0L8 7.707l5.646 5.647a.5.5 0 0 1 .708-.708l-6-6a.5.5 0 0 1-.708 0l-6 6a.5.5 0 0 1 0 .708z" />
-                                    </svg>
-                                    Show Less
-                                </>
-                            ) : (
-                                <>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-double-down" viewBox="0 0 16 16">
-                                        <path fillRule="evenodd" d="M1.646 6.646a.5.5 0 0 1 .708 0L8 12.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708" />
-                                        <path fillRule="evenodd" d="M1.646 2.646a.5.5 0 0 1 .708 0L8 8.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708" />
-                                    </svg>
-                                    Show More
-                                </>
-                            )}
-                        </button>
-                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        {Object.entries(groupedApplications).length > showMoreAppsCount && (
+                            <button className="show-more" onClick={handleShowMoreApps}>
+                                Show More
+                            </button>
+                        )}
+                        {showLessApps && (
+                            <button className="show-more" onClick={handleShowLessApps}>
+                                Show Less
+                            </button>
+                        )}
+                    </div>
                 </div>
                 <div className="summary">
                     <h3>Top Window Titles</h3>
                     {Object.entries(groupedWindows).length > 0 ? (
-                        Object.entries(groupedWindows).slice(0, showMoreWindows ? undefined : 5).map(([windowTitle, minutes]) => (
-                            <Window key={windowTitle} data={{ windowTitle, activeTime: minutes }} />
-                        ))
+                        Object.entries(groupedWindows)
+                            .slice(0, showMoreWindowsCount)
+                            .map(([windowTitle, minutes]) => (
+                                <Window key={windowTitle} data={{ windowTitle, activeTime: minutes }} />
+                            ))
                     ) : (
                         <p className="no-data">No Window Titles</p>
                     )}
-                    {Object.entries(groupedWindows).length > 5 && (
-                        <button className="show-more" onClick={() => setShowMoreWindows(!showMoreWindows)}>
-                            {showMoreWindows ? (
-                                <>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-double-up" viewBox="0 0 16 16">
-                                        <path fillRule="evenodd" d="M1.646 9.646a.5.5 0 0 1 .708 0L8 3.707l5.646 5.647a.5.5 0 0 1 .708-.708l-6-6a.5.5 0 0 1-.708 0l-6 6a.5.5 0 0 1 0 .708z" />
-                                        <path fillRule="evenodd" d="M1.646 13.646a.5.5 0 0 1 .708 0L8 7.707l5.646 5.647a.5.5 0 0 1 .708-.708l-6-6a.5.5 0 0 1-.708 0l-6 6a.5.5 0 0 1 0 .708z" />
-                                    </svg>
-                                    Show Less
-                                </>
-                            ) : (
-                                <>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-double-down" viewBox="0 0 16 16">
-                                        <path fillRule="evenodd" d="M1.646 6.646a.5.5 0 0 1 .708 0L8 12.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708" />
-                                        <path fillRule="evenodd" d="M1.646 2.646a.5.5 0 0 1 .708 0L8 8.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708" />
-                                    </svg>
-                                    Show More
-                                </>
-                            )}
-                        </button>
-                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        {Object.entries(groupedWindows).length > showMoreWindowsCount && (
+                            <button className="show-more" onClick={handleShowMoreWindows}>
+                                Show More
+                            </button>
+                        )}
+                        {showLessWindows && (
+                            <button className="show-more" onClick={handleShowLessWindows}>
+                                Show Less
+                            </button>
+                        )}
+                    </div>
                 </div>
                 <div className="timeline">
                     <Timeline activities={activityData} activeTime={activeTime} />
@@ -190,3 +212,6 @@ function Dashboard() {
     );
 }
 export default Dashboard;
+
+
+
