@@ -59,11 +59,11 @@ Projeyi yerel ortamınızda çalıştırmak için aşağıdaki adımları izleyi
 
 5.  **Uygulamayı Çalıştırın:**
     ```bash
-    npm start
+    npm run dev
     # veya
     yarn start
     ```
-    Uygulama genellikle `http://localhost:3000` adresinde açılacaktır.
+    Uygulama genellikle `http://localhost:5173` adresinde açılacaktır.
 
 ---
 
