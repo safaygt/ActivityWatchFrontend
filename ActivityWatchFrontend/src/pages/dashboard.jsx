@@ -188,7 +188,7 @@ function Dashboard() {
             filename: `activity_report_${formatDateForDisplay(date).replace(/\s+/g, '_')}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2, useCORS: true },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            jsPDF: { unit: 'mm', format: 'a2', orientation: 'portrait' }
         };
         html2pdf().from(dashboardRef.current).set(opt).outputPdf('blob')
             .then(blob => {
@@ -210,47 +210,51 @@ function Dashboard() {
                     Active Time: {formatActiveTime(activeTime)}
                 </p>
                 <p className="time-display-item start-time">
-
-                    Start:{' '}
+                    Start / End:{' '}
                     {viewMode === 'daily'
                         ? formatTime(firstActivityTime)
                         : formatDayMonthYear(firstActivityTime)
-                    }
-                </p>
-                <p className="time-display-item end-time">
-                    End:{' '}
+                    } /{' '}
                     {viewMode === 'daily'
                         ? formatTime(calculatedEndTime)
                         : formatDayMonthYear(calculatedEndTime)
-                    }
-                </p>
+                    }</p>
+
                 <div className="pdf-button-container">
                     <button onClick={generatePDF} className="save-pdf-button" title="Save as PDF">
                         <Save className="h-4 w-4" /> Save as PDF
                     </button>
                 </div>
+                <div className="date-navigation">
+                    <div className="flex-spacer"></div>
+
+                    <div className="date-controls-group">
+                        <button onClick={() => handleDateChange(-1)}>←</button>
+                        {viewMode === 'daily'
+                            ? <input
+                                type="date"
+                                className="date-input"
+                                value={formatDateForInput(date)}
+                                onChange={handleInputChange}
+                            />
+                            : <input
+                                type="month"
+                                className="date-input"
+                                value={formatDateForInput(date)}
+                                onChange={handleInputChange}
+                            />
+                        }
+                        <button onClick={() => handleDateChange(1)}>→</button>
+                    </div>
+                    <button onClick={handleViewModeChange} className="view-mode-toggle-button">
+                        {viewMode === 'daily' ? 'Switch to Monthly View' : 'Switch to Daily View'}
+                    </button>
+                </div>
+
+
+
             </div>
-            <div className="date-navigation">
-                <button onClick={() => handleDateChange(-1)}>←</button>
-                {viewMode === 'daily'
-                    ? <input
-                        type="date"
-                        className="date-input"
-                        value={formatDateForInput(date)}
-                        onChange={handleInputChange}
-                    />
-                    : <input
-                        type="month"
-                        className="date-input"
-                        value={formatDateForInput(date)}
-                        onChange={handleInputChange}
-                    />
-                }
-                <button onClick={() => handleDateChange(1)}>→</button>
-                <button onClick={handleViewModeChange} className="view-mode-toggle-button">
-                    {viewMode === 'daily' ? 'Switch to Monthly View' : 'Switch to Daily View'}
-                </button>
-            </div>
+
             <div className="content">
                 <div className="summary">
                     <h3>Top Applications</h3>

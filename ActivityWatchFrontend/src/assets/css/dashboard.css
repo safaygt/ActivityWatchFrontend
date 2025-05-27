@@ -13,11 +13,8 @@
     position: relative;
 }
 
-
-
 .header {
     text-align: center;
-    margin-bottom: 1rem;
     width: 100%;
     position: relative;
 }
@@ -50,9 +47,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-
     max-height: none !important;
-
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -146,7 +141,6 @@
 
 .chartjs-render-monitor {
     display: block;
-
 }
 
 canvas {
@@ -168,9 +162,16 @@ canvas {
     display: flex;
     align-items: center;
     width: 100%;
-    justify-content: center;
     border-bottom: solid 1px #5a6268;
     padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.date-controls-group {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    justify-content: center;
 }
 
 .date-navigation button {
@@ -193,7 +194,6 @@ canvas {
     width: auto;
     margin: 0 1rem;
 }
-
 
 .save-pdf-button {
     background-color: #6b757d;
@@ -218,4 +218,23 @@ canvas {
 .save-pdf-button svg {
     width: 1rem;
     height: 1rem;
+}
+
+.view-mode-toggle-button {
+    background-color: #6b757d;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    position: absolute;
+    bottom: 2.1rem;
+    right: 0.625rem;
+
+    transition: background-color 0.3s ease;
+}
+
+.view-mode-toggle-button:hover {
+    background-color: #5a6268;
 }
